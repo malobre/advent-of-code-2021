@@ -3,28 +3,27 @@
 /// position with depth.
 use std::io::{self, BufRead};
 
+use anyhow::Ok;
+
 fn main() -> Result<(), anyhow::Error> {
-    let mut horizontal_pos = 0;
-    let mut depth = 0;
+    let (depth, horizontal_pos) =
+        io::stdin()
+            .lock()
+            .lines()
+            .try_fold((0, 0), |(depth, horizontal_pos), input| {
+                let input = input?;
+                let (command, value) = input
+                    .split_once(" ")
+                    .ok_or(anyhow::anyhow!("expected `<command> <arg>`"))?;
+                let value = value.parse::<u64>()?;
 
-    for line in io::stdin().lock().lines() {
-        let line = line?;
-        let (command, value) = line.split_once(" ").unwrap();
-        let value = value.parse::<u64>()?;
-
-        match command {
-            "forward" => {
-                horizontal_pos += value;
-            }
-            "down" => {
-                depth += value;
-            }
-            "up" => {
-                depth -= value;
-            }
-            _ => unreachable!("unknown command"),
-        }
-    }
+                match command {
+                    "forward" => Ok((depth, horizontal_pos + value)),
+                    "down" => Ok((depth + value, horizontal_pos)),
+                    "up" => Ok((depth - value, horizontal_pos)),
+                    _ => anyhow::bail!("unknown command `{}`", command),
+                }
+            })?;
 
     println!("Final horizontal position: {}", horizontal_pos);
     println!("Final depth: {}", depth);
