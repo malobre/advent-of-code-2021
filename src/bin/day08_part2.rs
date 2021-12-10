@@ -2,7 +2,7 @@
 /// I couldn't figure it out, I implemented a clever algorithm by `/u/4HbQ`.
 /// <https://www.reddit.com/r/adventofcode/comments/rbj87a/comment/hnoyy04/>
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{HashMap, HashSet},
     io::{self, BufRead},
 };
 
@@ -17,7 +17,7 @@ fn main() -> Result<(), anyhow::Error> {
             .ok_or(anyhow::anyhow!("expected a `|`"))?;
 
         let words_by_len = signal.split_whitespace().fold(
-            BTreeMap::<usize, BTreeSet<char>>::new(),
+            HashMap::<usize, HashSet<char>>::new(),
             |mut buffer, word| {
                 buffer.entry(word.len()).or_default().extend(word.chars());
                 buffer
@@ -27,7 +27,7 @@ fn main() -> Result<(), anyhow::Error> {
         let mut decoded_output: u32 = 0;
 
         for word in output.split_whitespace() {
-            let word = word.chars().collect::<BTreeSet<char>>();
+            let word = word.chars().collect::<HashSet<char>>();
 
             let digit = match (
                 word.len(),

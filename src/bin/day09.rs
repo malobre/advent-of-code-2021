@@ -1,8 +1,7 @@
 /// Day 9
 /// Find the lowpoints in a heightmap and compute the size of bassins.
-
 use std::{
-    collections::BTreeSet,
+    collections::HashSet,
     io::{self, BufRead},
 };
 
@@ -44,7 +43,7 @@ fn main() -> Result<(), anyhow::Error> {
                 Ok(buffer)
             })?;
 
-    let mut lowpoints = BTreeSet::<(usize, usize)>::new();
+    let mut lowpoints = HashSet::<(usize, usize)>::new();
 
     for (y, line) in heightmap.iter().enumerate() {
         for (x, &value) in line.iter().enumerate() {
@@ -77,7 +76,7 @@ fn main() -> Result<(), anyhow::Error> {
                     x: usize,
                     y: usize,
                     heightmap: &[Vec<u8>],
-                    bassin: &mut BTreeSet<(usize, usize)>,
+                    bassin: &mut HashSet<(usize, usize)>,
                 ) {
                     match heightmap.get(y).and_then(|line| line.get(x)) {
                         Some(&n) if n < 9 => {
@@ -93,7 +92,7 @@ fn main() -> Result<(), anyhow::Error> {
                     }
                 }
 
-                let mut visited = BTreeSet::new();
+                let mut visited = HashSet::new();
 
                 visit(x, y, &heightmap, &mut visited);
 
